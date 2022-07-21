@@ -6,8 +6,12 @@ from dash.dependencies import Input, Output
 import plotly.express as px
 
 app = dash.Dash(__name__)
-app.title = "Premiere League Dashboard"
+server = app.server # line for heroku for afterwards
+app.title = "Premiere League Dashboard 20/21"
 # help(dash.html.Div)
+
+
+df = pd.read_csv("EPL_20_21.csv")
 
 drop_down_box = html.Div(
     children=["dropdown", dcc.Dropdown()],
