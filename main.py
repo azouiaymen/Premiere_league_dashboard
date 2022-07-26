@@ -11,7 +11,20 @@ app.title = "Premiere League Dashboard 20/21"
 # help(dash.html.Div)
 
 
-df = pd.read_csv("EPL_20_21.csv")
+data = pd.read_csv("Data.csv")
+
+
+def get_team_runs(player):
+    global data
+    bat_df = data.groupby(['Club'])["batsman_runs"].sum().reset_index().copy()
+    bat_df = bat_df[bat_df["batsman"]==player]
+    bat_df = bat_df[bat_df["batsman_runs"]>0]
+
+    fig = px.bar(bat_df, x="bowling_team", y="batsman_runs", color="batsman_runs",
+             labels={'bowling_team':'Teams', 'batsman_runs':'Runs Scored'}, height=400, width = 500,
+                title="Runs Scored by " + player + " against all teams", template='plotly_dark')
+    fig.update_layout({'paper_bgcolor': '#282828', 'plot_bgcolor':'#282828'})
+    return fig
 
 drop_down_box = html.Div(
     children=["dropdown", dcc.Dropdown()],
@@ -21,6 +34,16 @@ drop_down_box = html.Div(
            'z-index': '1', 'border': '2px solid green',
            'text-align': 'center'}
 )
+
+main_div_style = {"background-color": "#181818", 
+                    "padding":"0", 
+                    "width":"100%", 
+                    "height":"100", 
+                    "position": "fixed",
+                    "top": "0%",
+                    "left": "0",
+                    "bottom": "0",
+                }
 
 # section for the graphs
 Graphs = html.Div(
