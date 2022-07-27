@@ -66,6 +66,18 @@ app.layout = html.Div(id='main_div', children=[drop_down_box, Graphs],
                              'border': '2px solid blue'}
                       )
 
+def get_total_wickets(player):
+    global df
+    bol_df = df[~df["dismissal_kind"].isin(["retired hurt", "run out", "obstructing the field"])].copy()
+    bol_df = bol_df.groupby(["batting_team", "bowler"])['is_wicket'].sum().reset_index().copy()
+    bol_df = bol_df[bol_df["bowler"]==player]
+    bol_df = bol_df[bol_df['is_wicket']>0]
+                    
+    fig = px.pie(bol_df, values='is_wicket', names='batting_team', labels={'batting_team':'Teams', 'is_wicket':'Wickets_taken'}, height=400, width = 500,
+                title="Wickets taken by " + player + " against all teams", template='plotly_dark')
+    fig.update_layout({'paper_bgcolor': '#282828', 'plot_bgcolor':'#282828'})
+    fig.update_traces(textinfo='value')
+    return fig
 
 if __name__ == '__main__':
     app.run_server(debug=False, port=8080)
